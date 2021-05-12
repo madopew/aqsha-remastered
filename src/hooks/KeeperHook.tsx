@@ -12,12 +12,26 @@ function getMonthDays() {
     return new Date(now.getUTCFullYear(), now.getUTCMonth(), 0).getDate();
 }
 
-export default function useKeeper(): [
+enum OperationType {
+    Update,
+    Add,
+    Withdraw,
+}
+interface KeeperOperation {
+    time: Date;
+    type: OperationType;
+    amount: number;
+}
+
+export default function useKeeper(
+    historyDepth: number
+): [
     total: number,
     updateTotal: (amount: number) => void,
     today: number,
     add: (amount: number) => void,
-    withdraw: (amount: number) => void
+    withdraw: (amount: number) => void,
+    history: Array<KeeperOperation>
 ] {
     const EPS = 0.001;
 
@@ -48,7 +62,24 @@ export default function useKeeper(): [
         updateTodayBalance();
     });
 
+    const [history, setHistory] = useLocalStorage<Array<KeeperOperation>>(
+        "history",
+        []
+    );
+
+    const addOperation = (type: OperationType, amount: number) => {
+        let cp = history.slice(0);
+        if (history.length >= historyDepth) {
+            cp = history.slice(history.length - historyDepth + 1);
+        }
+
+        cp.push({ time: new Date(), type, amount });
+        setHistory(cp);
+    };
+
     const updateTotalBalance = (newTotal: number) => {
+        addOperation(OperationType.Update, newTotal);
+
         let newDaily = newTotal / getMonthDays();
         setLast(getTodayDate());
         setDaily(newDaily);
@@ -57,18 +88,22 @@ export default function useKeeper(): [
     };
 
     const add = (amount: number) => {
+        addOperation(OperationType.Add, amount);
+
         setTotal(total + amount);
         setToday(today + amount);
     };
 
     const withdraw = (amount: number) => {
         if (total - amount > -EPS) {
+            addOperation(OperationType.Withdraw, amount);
+
             setToday(today - amount);
-            setTotal(total - amount);
+            setTotal(Math.abs(total - amount));
             return true;
         }
         return false;
     };
 
-    return [total, updateTotalBalance, today, add, withdraw];
+    return [total, updateTotalBalance, today, add, withdraw, history];
 }

@@ -4,7 +4,6 @@ function useLocalStorage<T>(
     key: string,
     initialValue: T
 ): [T, (value: T) => void] {
-    const JSONBigint = require("json-bigint");
     // Get from local storage then
     // parse stored json or return initialValue
     const readValue = () => {
@@ -15,7 +14,7 @@ function useLocalStorage<T>(
 
         try {
             const item = window.localStorage.getItem(key);
-            if (item !== null) return JSONBigint.parse(item);
+            if (item !== null) return JSON.parse(item);
 
             window.localStorage.setItem(key, JSON.stringify(initialValue));
             return initialValue;
