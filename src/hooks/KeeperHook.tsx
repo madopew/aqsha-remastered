@@ -23,16 +23,23 @@ interface KeeperOperation {
     amount: number;
 }
 
-export default function useKeeper(
-    historyDepth: number
-): [
+interface KeeperState {
+    total: number;
+    today: number;
+    daily: number;
+}
+
+type KeeperOutput = [
     total: number,
     updateTotal: (amount: number) => void,
     today: number,
     add: (amount: number) => void,
     withdraw: (amount: number) => void,
-    history: Array<KeeperOperation>
-] {
+    history: Array<KeeperOperation>,
+    undo: () => void
+];
+
+export default function useKeeper(historyDepth: number): KeeperOutput {
     const EPS = 0.001;
 
     const updateTodayBalance = () => {
@@ -67,7 +74,12 @@ export default function useKeeper(
         []
     );
 
+    const [undos, setUndos] = useLocalStorage<Array<KeeperState>>("undos", []);
+
     const addOperation = (type: OperationType, amount: number) => {
+        undos.push({ total, today, daily });
+        setUndos(undos);
+
         let cp = history.slice(0);
         if (history.length >= historyDepth) {
             cp = history.slice(history.length - historyDepth + 1);
@@ -105,5 +117,18 @@ export default function useKeeper(
         return false;
     };
 
-    return [total, updateTotalBalance, today, add, withdraw, history];
+    const undo = () => {
+        if (undos.length > 0) {
+            history.pop();
+            setHistory(history);
+            let u = undos.pop();
+            if (u === undefined) throw new Error("Undo operation is undefined");
+            setUndos(undos);
+            setTotal(u.total);
+            setToday(u.today);
+            setDaily(u.daily);
+        }
+    };
+
+    return [total, updateTotalBalance, today, add, withdraw, history, undo];
 }
