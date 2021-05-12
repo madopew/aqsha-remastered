@@ -1,0 +1,91 @@
+.balance-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 2rem;
+    align-items: center;
+    font-family: "Exo", sans-serif;
+}
+
+.balance-positive,
+.balance-negative {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
+    transition: opacity 0.3s linear;
+    border-bottom-left-radius: 10vw;
+    border-bottom-right-radius: 10vw;
+}
+
+.balance-positive {
+    background-color: blue;
+}
+
+.balance-negative {
+    background-color: red;
+}
+
+.balance-indicator {
+    z-index: 1;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.balance-indicator h2 {
+    font-weight: 500;
+}
+
+.balance-indicator h3 {
+    font-weight: 600;
+    font-size: 2.5rem;
+}
+
+.balance-indicator h3 span {
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.balance-buttons {
+    z-index: 1;
+    position: absolute;
+    bottom: 0;
+    transform: translateY(50%);
+    width: 90vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: #efeff2;
+    height: 6vh;
+    border-radius: 12px;
+}
+
+.balance-buttons .balance-buttons-separator {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 1px;
+    height: 60%;
+}
+
+.balance-buttons button {
+    height: 100%;
+    width: 50%;
+    border: none;
+    outline: none;
+    padding: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    font-size: 1.2rem;
+}
