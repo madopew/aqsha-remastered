@@ -1,4 +1,3 @@
-import { AddCircle, RemoveCircle } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import "./balance.css";
 
@@ -45,12 +44,14 @@ export default function Balance({
             </div>
             <div className="balance-buttons">
                 <button onTouchEnd={() => onAdd()}>
-                    <AddCircle />
+                    <span className="material-icons-outlined">add_circle</span>{" "}
                     Add
                 </button>
                 <div className="balance-buttons-separator"></div>
                 <button onTouchEnd={() => onWithdraw()}>
-                    <RemoveCircle />
+                    <span className="material-icons-outlined">
+                        remove_circle
+                    </span>{" "}
                     Out
                 </button>
             </div>
