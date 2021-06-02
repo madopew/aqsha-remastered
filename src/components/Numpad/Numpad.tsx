@@ -9,14 +9,29 @@ interface NumpadProps {
 export default function Numpad({ onCancel, onSuccess }: NumpadProps) {
     const [value, setValue] = useState(0);
 
-    const onButtonClick = (val: string) => {};
+    const onButtonClick = (val: string) => {
+        switch (val) {
+            case "-":
+                if (value === 0) {
+                    onCancel();
+                } else {
+                    setValue(Math.floor(value / 10));
+                }
+                break;
+            case "+":
+                onSuccess(value / 100);
+                break;
+            default:
+                setValue(value * 10 + parseInt(val));
+        }
+    };
 
     return (
         <div className="numpad-outer-container">
             <div className="numpad-inner-container">
                 <div className="numpad-value-container">
                     <div className="numpad-value-container-inner">
-                        {value.toFixed(2)}
+                        {(value / 100).toFixed(2)}
                         <span>BYR</span>
                     </div>
                 </div>
