@@ -18,17 +18,27 @@
     left: 0;
     right: 0;
     z-index: 0;
-    transition: opacity 0.3s linear;
+    transition: opacity 0.5s linear;
     border-bottom-left-radius: 10vw;
     border-bottom-right-radius: 10vw;
 }
 
 .balance-positive {
-    background-color: blue;
+    background: rgb(92, 159, 237);
+    background: linear-gradient(
+        225deg,
+        rgba(92, 159, 237, 1) 0%,
+        rgba(88, 109, 224, 1) 100%
+    );
 }
 
 .balance-negative {
-    background-color: red;
+    background: rgb(241, 179, 158);
+    background: linear-gradient(
+        225deg,
+        rgba(241, 179, 158, 1) 0%,
+        rgba(240, 88, 88, 1) 100%
+    );
 }
 
 .balance-indicator {
@@ -68,11 +78,13 @@
     background-color: #efeff2;
     height: 6vh;
     border-radius: 12px;
+    overflow: hidden;
 }
 
 .balance-buttons .balance-buttons-separator {
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 1px;
+    background: rgba(0, 0, 0, 0.2);
     height: 60%;
 }
 
@@ -88,4 +100,9 @@
     align-items: center;
     font-weight: 500;
     font-size: 1.2rem;
+}
+
+.balance-buttons button .material-icons-outlined {
+    font-size: 1.2rem;
+    margin-right: 0.3rem;
 }
