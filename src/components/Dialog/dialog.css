@@ -17,6 +17,7 @@
     color: white;
     width: 70vw;
     border-radius: 15px;
+    overflow: hidden;
 }
 
 .dialog-container h1 {
