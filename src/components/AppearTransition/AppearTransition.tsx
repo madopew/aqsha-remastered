@@ -1,4 +1,5 @@
 import { CSSTransition } from "react-transition-group";
+import "./appear-transition.css";
 
 export enum TransitionType {
     bottomToTop,
@@ -19,7 +20,7 @@ export default function AppearTransition({
     return (
         <CSSTransition
             in={visible}
-            timeout={0}
+            timeout={200}
             classNames={"appear-transition-" + TransitionType[effect]}
             unmountOnExit
         >
