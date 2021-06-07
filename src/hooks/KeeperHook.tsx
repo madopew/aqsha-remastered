@@ -34,7 +34,7 @@ type KeeperOutput = [
     updateTotal: (amount: number) => void,
     today: number,
     add: (amount: number) => void,
-    withdraw: (amount: number) => void,
+    withdraw: (amount: number) => boolean,
     history: Array<KeeperOperation>,
     undo: () => void
 ];
