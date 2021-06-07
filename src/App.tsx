@@ -7,53 +7,16 @@ import Balance from "./components/Balance/Balance";
 import Dialog, { DialogOptions } from "./components/Dialog/Dialog";
 import Numpad from "./components/Numpad/Numpad";
 import useKeeper from "./hooks/KeeperHook";
+import numpadReducer, {
+    NumpadActionType,
+    NumpadOperationType,
+} from "./reducers/NumpadReducer";
 
 function App() {
     const MAX_HISTORY = 10;
     const [total, updateTotal, today, add, withdraw, history, undo] =
         useKeeper(MAX_HISTORY);
 
-    enum NumpadActionType {
-        open,
-        close,
-        hide,
-    }
-    enum NumpadOperationType {
-        withdraw,
-        unknown,
-        none,
-    }
-    type NumpadState = { visible: boolean; operation: NumpadOperationType };
-    type NumpadAction =
-        | { type: NumpadActionType.open; payload: NumpadOperationType }
-        | { type: NumpadActionType.close; payload: number }
-        | { type: NumpadActionType.hide };
-    const numpadReducer = (
-        prevState: NumpadState,
-        action: NumpadAction
-    ): NumpadState => {
-        switch (action.type) {
-            case NumpadActionType.open:
-                return { visible: true, operation: action.payload };
-            case NumpadActionType.close:
-                switch (prevState.operation) {
-                    case NumpadOperationType.unknown:
-                        // TODO: show dialog
-                        break;
-                    case NumpadOperationType.withdraw:
-                        withdraw(action.payload);
-                        break;
-                    default:
-                        throw Error(
-                            "Invalid numpad close " +
-                                NumpadOperationType[prevState.operation]
-                        );
-                }
-                return { visible: false, operation: NumpadOperationType.none };
-            case NumpadActionType.hide:
-                return { visible: false, operation: NumpadOperationType.none };
-        }
-    };
     const [numpadState, numpadDispatch] = useReducer(numpadReducer, {
         visible: false,
         operation: NumpadOperationType.none,
@@ -114,6 +77,9 @@ function App() {
         numpadDispatch({
             type: NumpadActionType.close,
             payload: val,
+            withdraw,
+            onChoose: (val) => console.log("choose " + val),
+            onError: () => console.log("not enough"),
         });
     };
 
