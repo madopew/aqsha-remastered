@@ -22,7 +22,7 @@
 
 .appear-transition-fadeIn-enter-active {
     opacity: 1;
-    transition: opacity 200ms linear;
+    transition: opacity 100ms linear;
 }
 
 .appear-transition-fadeIn-exit {
