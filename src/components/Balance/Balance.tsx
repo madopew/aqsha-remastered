@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./balance.css";
-
+import NumberEasing from "react-number-easing";
 interface BalanceProps {
     total: number;
     today: number;
@@ -33,13 +33,13 @@ export default function Balance({
             <div className="balance-indicator">
                 <h2>Total Balance</h2>
                 <h3>
-                    {total.toFixed(2)} <span>BYR</span>
+                    <NumberEasing value={total} decimals={2} /> <span>BYR</span>
                 </h3>
             </div>
             <div className="balance-indicator">
                 <h2>Today Balance</h2>
                 <h3>
-                    {today.toFixed(2)} <span>BYR</span>
+                    <NumberEasing value={today} decimals={2} /> <span>BYR</span>
                 </h3>
             </div>
             <div className="balance-buttons">
