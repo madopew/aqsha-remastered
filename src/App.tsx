@@ -1,78 +1,143 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import "./App.css";
 import AppearTransition, {
     TransitionType,
 } from "./components/AppearTransition/AppearTransition";
 import Balance from "./components/Balance/Balance";
+import Dialog, { DialogOptions } from "./components/Dialog/Dialog";
 import Numpad from "./components/Numpad/Numpad";
 import useKeeper from "./hooks/KeeperHook";
-
-enum NumpadActionType {
-    update,
-    add,
-    withdraw,
-    unknown,
-    none,
-}
 
 function App() {
     const MAX_HISTORY = 10;
     const [total, updateTotal, today, add, withdraw, history, undo] =
         useKeeper(MAX_HISTORY);
 
-    const [numpadVisible, setNumpadVisible] = useState(false);
-    const [numpadAction, setNumpadAction] = useState(NumpadActionType.none);
+    enum NumpadActionType {
+        open,
+        close,
+        hide,
+    }
+    enum NumpadOperationType {
+        withdraw,
+        unknown,
+        none,
+    }
+    type NumpadState = { visible: boolean; operation: NumpadOperationType };
+    type NumpadAction =
+        | { type: NumpadActionType.open; payload: NumpadOperationType }
+        | { type: NumpadActionType.close; payload: number }
+        | { type: NumpadActionType.hide };
+    const numpadReducer = (
+        prevState: NumpadState,
+        action: NumpadAction
+    ): NumpadState => {
+        switch (action.type) {
+            case NumpadActionType.open:
+                return { visible: true, operation: action.payload };
+            case NumpadActionType.close:
+                switch (prevState.operation) {
+                    case NumpadOperationType.unknown:
+                        // TODO: show dialog
+                        break;
+                    case NumpadOperationType.withdraw:
+                        withdraw(action.payload);
+                        break;
+                    default:
+                        throw Error(
+                            "Invalid numpad close " +
+                                NumpadOperationType[prevState.operation]
+                        );
+                }
+                return { visible: false, operation: NumpadOperationType.none };
+            case NumpadActionType.hide:
+                return { visible: false, operation: NumpadOperationType.none };
+        }
+    };
+    const [numpadState, numpadDispatch] = useReducer(numpadReducer, {
+        visible: false,
+        operation: NumpadOperationType.none,
+    });
+
+    const DIALOG_OPTIONS_INIT: DialogOptions = {
+        title: "Title",
+        text: "Text",
+        firstButtonText: "First",
+        secondButtonText: "Second",
+        showCancelButton: true,
+        onFirst: null,
+        onSecond: null,
+        onCancel: () => setDialogVisible(false),
+    };
+
+    const DIALOG_OPTIONS_ADD: DialogOptions = {
+        title: "Balance updated.",
+        text: "Do you want to add extra income or update monthly balance?",
+        firstButtonText: "Add",
+        secondButtonText: "Update",
+        showCancelButton: true,
+        onFirst: null,
+        onSecond: null,
+        onCancel: () => setDialogVisible(false),
+    };
+
+    const DIALOG_OPTIONS_NOT_ENOUGH: DialogOptions = {
+        title: "You don't have enough money.",
+        text: null,
+        firstButtonText: "Close",
+        secondButtonText: null,
+        showCancelButton: false,
+        onFirst: () => setDialogVisible(false),
+        onSecond: null,
+        onCancel: () => setDialogVisible(false),
+    };
+
+    const [dialogVisible, setDialogVisible] = useState(false);
+    const [dialogOptions, setDialogOptions] =
+        useState<DialogOptions>(DIALOG_OPTIONS_INIT);
 
     const onAdd = () => {
-        // TODO: change to unknown
-        setNumpadAction(NumpadActionType.add);
-        setNumpadVisible(true);
+        numpadDispatch({
+            type: NumpadActionType.open,
+            payload: NumpadOperationType.unknown,
+        });
     };
 
     const onWithdraw = () => {
-        setNumpadAction(NumpadActionType.withdraw);
-        setNumpadVisible(true);
-    };
-
-    const dispatchNumpadAction = (val: number) => {
-        switch (numpadAction) {
-            case NumpadActionType.update:
-                updateTotal(val);
-                break;
-            case NumpadActionType.add:
-                add(val);
-                break;
-            case NumpadActionType.withdraw:
-                withdraw(val);
-                // TODO: show error message
-                break;
-            case NumpadActionType.none:
-                break;
-            default:
-                throw Error("Something wrong with numpad action!");
-        }
+        numpadDispatch({
+            type: NumpadActionType.open,
+            payload: NumpadOperationType.withdraw,
+        });
     };
 
     const onNumpadSuccess = (val: number) => {
-        setNumpadVisible(false);
-        if (numpadAction === NumpadActionType.unknown) {
-            // TODO: ask for action type
-        }
-
-        dispatchNumpadAction(val);
+        numpadDispatch({
+            type: NumpadActionType.close,
+            payload: val,
+        });
     };
 
     return (
         <div className="root-main">
             <div className="root-top">
                 <AppearTransition
-                    visible={numpadVisible}
+                    visible={numpadState.visible}
                     effect={TransitionType.bottomToTop}
                 >
                     <Numpad
                         onSuccess={onNumpadSuccess}
-                        onCancel={() => setNumpadVisible(false)}
+                        onCancel={() =>
+                            numpadDispatch({ type: NumpadActionType.hide })
+                        }
                     />
+                </AppearTransition>
+            </div>
+            <div className="root-top">
+                <AppearTransition
+                    visible={dialogVisible}
+                    effect={TransitionType.fadeIn}
+                >
+                    <Dialog options={dialogOptions} />
                 </AppearTransition>
             </div>
             <div className="root-balance">
