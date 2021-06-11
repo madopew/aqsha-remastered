@@ -12,6 +12,7 @@ import numpadReducer, {
     NumpadActionType,
     NumpadOperationType,
 } from "./reducers/NumpadReducer";
+import History from "./components/History/History";
 
 function App() {
     const MAX_HISTORY = 10;
@@ -103,6 +104,9 @@ function App() {
                     onAdd={onAdd}
                     onWithdraw={onWithdraw}
                 />
+            </div>
+            <div className="root-history">
+                <History history={history} undo={undo} />
             </div>
         </div>
     );

@@ -12,12 +12,12 @@ function getMonthDays() {
     return new Date(now.getUTCFullYear(), now.getUTCMonth(), 0).getDate();
 }
 
-enum OperationType {
-    Update,
-    Add,
-    Withdraw,
+export enum OperationType {
+    update,
+    add,
+    withdraw,
 }
-interface KeeperOperation {
+export interface KeeperOperation {
     time: Date;
     type: OperationType;
     amount: number;
@@ -85,12 +85,12 @@ export default function useKeeper(historyDepth: number): KeeperOutput {
             cp = history.slice(history.length - historyDepth + 1);
         }
 
-        cp.push({ time: new Date(), type, amount });
+        cp.unshift({ time: new Date(), type, amount });
         setHistory(cp);
     };
 
     const updateTotalBalance = (newTotal: number) => {
-        addOperation(OperationType.Update, newTotal);
+        addOperation(OperationType.update, newTotal);
 
         let newDaily = newTotal / getMonthDays();
         setLast(getTodayDate());
@@ -100,7 +100,7 @@ export default function useKeeper(historyDepth: number): KeeperOutput {
     };
 
     const add = (amount: number) => {
-        addOperation(OperationType.Add, amount);
+        addOperation(OperationType.add, amount);
 
         setTotal(total + amount);
         setToday(today + amount);
@@ -108,7 +108,7 @@ export default function useKeeper(historyDepth: number): KeeperOutput {
 
     const withdraw = (amount: number) => {
         if (total - amount > -EPS) {
-            addOperation(OperationType.Withdraw, amount);
+            addOperation(OperationType.withdraw, amount);
 
             setToday(today - amount);
             setTotal(Math.abs(total - amount));
