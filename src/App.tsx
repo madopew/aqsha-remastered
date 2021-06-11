@@ -1,12 +1,13 @@
-import { useReducer, useState } from "react";
+import { useReducer } from "react";
 import "./App.css";
 import AppearTransition, {
     TransitionType,
 } from "./components/AppearTransition/AppearTransition";
 import Balance from "./components/Balance/Balance";
-import Dialog, { DialogOptions } from "./components/Dialog/Dialog";
+import Dialog, { DIALOG_OPTIONS_INIT } from "./components/Dialog/Dialog";
 import Numpad from "./components/Numpad/Numpad";
 import useKeeper from "./hooks/KeeperHook";
+import dialogReducer, { DialogActionType } from "./reducers/DialogReducer";
 import numpadReducer, {
     NumpadActionType,
     NumpadOperationType,
@@ -22,42 +23,10 @@ function App() {
         operation: NumpadOperationType.none,
     });
 
-    const DIALOG_OPTIONS_INIT: DialogOptions = {
-        title: "Title",
-        text: "Text",
-        firstButtonText: "First",
-        secondButtonText: "Second",
-        showCancelButton: true,
-        onFirst: null,
-        onSecond: null,
-        onCancel: () => setDialogVisible(false),
-    };
-
-    const DIALOG_OPTIONS_ADD: DialogOptions = {
-        title: "Balance updated.",
-        text: "Do you want to add extra income or update monthly balance?",
-        firstButtonText: "Add",
-        secondButtonText: "Update",
-        showCancelButton: true,
-        onFirst: null,
-        onSecond: null,
-        onCancel: () => setDialogVisible(false),
-    };
-
-    const DIALOG_OPTIONS_NOT_ENOUGH: DialogOptions = {
-        title: "You don't have enough money.",
-        text: null,
-        firstButtonText: "Close",
-        secondButtonText: null,
-        showCancelButton: false,
-        onFirst: () => setDialogVisible(false),
-        onSecond: null,
-        onCancel: () => setDialogVisible(false),
-    };
-
-    const [dialogVisible, setDialogVisible] = useState(false);
-    const [dialogOptions, setDialogOptions] =
-        useState<DialogOptions>(DIALOG_OPTIONS_INIT);
+    const [dialogState, dialogDispatch] = useReducer(dialogReducer, {
+        visible: false,
+        options: DIALOG_OPTIONS_INIT,
+    });
 
     const onAdd = () => {
         numpadDispatch({
@@ -78,8 +47,29 @@ function App() {
             type: NumpadActionType.close,
             payload: val,
             withdraw,
-            onChoose: (val) => console.log("choose " + val),
-            onError: () => console.log("not enough"),
+            onChoose: (val) =>
+                dialogDispatch({
+                    type: DialogActionType.openChoose,
+                    payload: val,
+                    info: {
+                        title: "Balance added.",
+                        text: "Do you want to add extra income or update monthy budget?",
+                    },
+                    add: add,
+                    update: updateTotal,
+                    close: () =>
+                        dialogDispatch({ type: DialogActionType.hide }),
+                }),
+            onError: () =>
+                dialogDispatch({
+                    type: DialogActionType.openInfo,
+                    info: {
+                        title: "You don't have enough balance.",
+                        text: null,
+                    },
+                    close: () =>
+                        dialogDispatch({ type: DialogActionType.hide }),
+                }),
         });
     };
 
@@ -100,10 +90,10 @@ function App() {
             </div>
             <div className="root-top">
                 <AppearTransition
-                    visible={dialogVisible}
+                    visible={dialogState.visible}
                     effect={TransitionType.fadeIn}
                 >
-                    <Dialog options={dialogOptions} />
+                    <Dialog options={dialogState.options} />
                 </AppearTransition>
             </div>
             <div className="root-balance">
