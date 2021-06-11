@@ -11,6 +11,17 @@ export interface DialogOptions {
     onCancel: (() => void) | null;
 }
 
+export const DIALOG_OPTIONS_INIT: DialogOptions = {
+    title: "Title",
+    text: "Text",
+    firstButtonText: "First",
+    secondButtonText: "Second",
+    showCancelButton: true,
+    onFirst: null,
+    onSecond: null,
+    onCancel: null,
+};
+
 interface DialogProps {
     options: DialogOptions;
 }
