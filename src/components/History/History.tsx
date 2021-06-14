@@ -21,6 +21,7 @@ const MonthNames = [
     "Nov",
     "Dec",
 ];
+
 const OperationSymbols = ["", "+", "-"];
 
 export default function History({ history, undo }: HistoryProps) {
