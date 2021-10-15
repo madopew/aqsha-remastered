@@ -20,7 +20,7 @@ export default function AppearTransition({
     return (
         <CSSTransition
             in={visible}
-            timeout={200}
+            timeout={300}
             classNames={"appear-transition-" + TransitionType[effect]}
             unmountOnExit
         >
