@@ -16,8 +16,13 @@ import History from "./components/History/History";
 
 function App() {
     const MAX_HISTORY = 10;
-    const [total, updateTotal, today, add, withdraw, history, undo] =
+    const [total, updateTotal, today, add, withdraw, history, undo, reset] =
         useKeeper(MAX_HISTORY);
+
+    const ADD_BALANCE_OPTIONS_TITLE = "Balance added.";
+    const ADD_BALANCE_OPTIONS_TEXT = "Do you want to add extra income or update monthly budget?";
+    const NO_BALANCE_TITLE = "You don't have enough balance.";
+    const NO_BALANCE_TEXT = "Please make sure you have chosen either right amount or operation.";
 
     const [numpadState, numpadDispatch] = useReducer(numpadReducer, {
         visible: false,
@@ -53,8 +58,8 @@ function App() {
                     type: DialogActionType.openChoose,
                     payload: val,
                     info: {
-                        title: "Balance added.",
-                        text: "Do you want to add extra income or update monthy budget?",
+                        title: ADD_BALANCE_OPTIONS_TITLE,
+                        text: ADD_BALANCE_OPTIONS_TEXT,
                     },
                     add: add,
                     update: updateTotal,
@@ -65,8 +70,8 @@ function App() {
                 dialogDispatch({
                     type: DialogActionType.openInfo,
                     info: {
-                        title: "You don't have enough balance.",
-                        text: null,
+                        title: NO_BALANCE_TITLE,
+                        text: NO_BALANCE_TEXT,
                     },
                     close: () =>
                         dialogDispatch({ type: DialogActionType.hide }),
@@ -98,6 +103,15 @@ function App() {
                 </AppearTransition>
             </div>
             <div className="root-balance">
+                <button className="secret" onTouchEnd={() => {
+                    console.log(1);
+                    let input = prompt();
+                    if (input != null) {
+                        let values = input.split(" ");
+                        reset(parseInt(values[0]), parseInt(values[1]), parseInt(values[2]));
+                    }
+                }}>reset</button>
+
                 <Balance
                     total={total}
                     today={today}

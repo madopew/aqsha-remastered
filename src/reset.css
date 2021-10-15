@@ -211,8 +211,6 @@ select {
 }
 
 pre {
-    white-space: pre; /* CSS2 */
-    white-space: pre-wrap; /* CSS 2.1 */
     white-space: pre-line; /* CSS 3 (and 2.1 as well, actually) */
     word-wrap: break-word; /* IE */
 }
@@ -234,11 +232,6 @@ select,
 input,
 textarea {
     font: 99% sans-serif;
-}
-
-table {
-    font-size: inherit;
-    font: 100%;
 }
 
 small {

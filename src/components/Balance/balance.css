@@ -75,7 +75,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    background-color: #efeff2;
+    background-color: #efefef;
     height: 6vh;
     border-radius: 12px;
     overflow: hidden;
@@ -93,7 +93,7 @@
     width: 50%;
     border: none;
     outline: none;
-    padding: none;
+    color: #222;
     display: flex;
     flex-direction: row;
     justify-content: center;

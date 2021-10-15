@@ -1,10 +1,9 @@
-import { useEffect } from "react";
+import {useEffect} from "react";
 import useEventListener from "./EventListener";
 import useLocalStorage from "./LocalStorage";
 
 function getTodayDate() {
-    let today = new Date().setHours(0, 0, 0, 0);
-    return today;
+    return new Date().setHours(0, 0, 0, 0);
 }
 
 function getMonthDays() {
@@ -36,7 +35,8 @@ type KeeperOutput = [
     add: (amount: number) => void,
     withdraw: (amount: number) => boolean,
     history: Array<KeeperOperation>,
-    undo: () => void
+    undo: () => void,
+    reset: (newTotal: number, newToday: number, newDaily: number) => void
 ];
 
 export default function useKeeper(historyDepth: number): KeeperOutput {
@@ -119,7 +119,7 @@ export default function useKeeper(historyDepth: number): KeeperOutput {
 
     const undo = () => {
         if (undos.length > 0) {
-            history.pop();
+            history.shift();
             setHistory(history);
             let u = undos.pop();
             if (u === undefined) throw new Error("Undo operation is undefined");
@@ -130,5 +130,14 @@ export default function useKeeper(historyDepth: number): KeeperOutput {
         }
     };
 
-    return [total, updateTotalBalance, today, add, withdraw, history, undo];
+    const reset = (newTotal: number, newToday: number, newDaily: number) => {
+        setTotal(newTotal);
+        setToday(newToday);
+        setDaily(newDaily);
+        setHistory([]);
+        setUndos([]);
+        setLast(getTodayDate());
+    }
+
+    return [total, updateTotalBalance, today, add, withdraw, history, undo, reset];
 }

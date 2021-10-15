@@ -27,10 +27,14 @@ const OperationSymbols = ["", "+", "-"];
 export default function History({ history, undo }: HistoryProps) {
     return (
         <div className="history-container">
-            {history.map((o) => {
+            {history.map((o, index) => {
                 let t = new Date(o.time);
                 return (
-                    <div key={uuid()} className="history-operation">
+                    <div key={uuid()}
+                         onTouchEnd={() => {
+                             if (index === 0) undo();
+                         }}
+                         className="history-operation">
                         <span className="operation-time">
                             {t.getDate()} {MonthNames[t.getMonth()]},{" "}
                             {t.getHours()}:{t.getMinutes()}

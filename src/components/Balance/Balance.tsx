@@ -12,7 +12,7 @@ export default function Balance({
     total,
     today,
     onAdd,
-    onWithdraw,
+    onWithdraw
 }: BalanceProps) {
     const [opacity, setOpacity] = useState(today < 0 ? 1 : 0);
     useEffect(() => {
