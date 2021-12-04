@@ -82,7 +82,7 @@ export default function useKeeper(historyDepth: number): KeeperOutput {
 
         let cp = history.slice(0);
         if (history.length >= historyDepth) {
-            cp = history.slice(history.length - historyDepth + 1);
+            cp.pop()
         }
 
         cp.unshift({ time: new Date(), type, amount });

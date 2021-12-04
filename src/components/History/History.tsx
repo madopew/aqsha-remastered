@@ -37,7 +37,7 @@ export default function History({ history, undo }: HistoryProps) {
                          className="history-operation">
                         <span className="operation-time">
                             {t.getDate()} {MonthNames[t.getMonth()]},{" "}
-                            {t.getHours()}:{t.getMinutes()}
+                            {t.getHours().toString().padStart(2)}:{t.getMinutes().toString().padStart(2)}
                         </span>
                         <span
                             className={
