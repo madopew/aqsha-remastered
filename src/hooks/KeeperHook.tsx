@@ -8,7 +8,7 @@ function getTodayDate() {
 
 function getMonthDays() {
     let now = new Date();
-    return new Date(now.getUTCFullYear(), now.getUTCMonth(), 0).getDate();
+    return new Date(now.getUTCFullYear(), now.getUTCMonth() + 1, 0).getDate();
 }
 
 export enum OperationType {

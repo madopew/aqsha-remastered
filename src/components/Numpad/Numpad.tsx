@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./numpad.css";
+import {BYN_SYMBOL} from "../../const/Constants";
 
 interface NumpadProps {
     onCancel: () => void;
@@ -32,7 +33,7 @@ export default function Numpad({ onCancel, onSuccess }: NumpadProps) {
                 <div className="numpad-value-container">
                     <div className="numpad-value-container-inner">
                         {(value / 100).toFixed(2)}
-                        <span>BYR</span>
+                        <span>{ BYN_SYMBOL }</span>
                     </div>
                 </div>
                 <div className="numpad-numpad">
