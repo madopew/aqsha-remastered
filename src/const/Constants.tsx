@@ -1,0 +1,1 @@
+export const BYN_SYMBOL = 'BYN';
